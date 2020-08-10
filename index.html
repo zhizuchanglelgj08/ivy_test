@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>购物车</title>
+  </head>
+  <style>
+    /* 谷歌 */
+    input::-webkit-outer-spin-button,
+    input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      appearance: none;
+      margin: 0;
+    }
+    /* 火狐 */
+    input {
+      -moz-appearance: textfield;
+    }
+    .msgCode input {
+      width: 20px;
+    }
+    .codeMask {
+      position: absolute;
+      width: 130px;
+      height: 25px;
+      background-color: rgba(0, 0, 0, 0.2);
+    }
+  </style>
+  <body>
+    <script src="vue.js"></script>
+    <!-- 宿主文件 -->
+    <div id="app">
+      <h2 :title="title">
+        <!-- 插值文本 -->
+        {{title}}
+      </h2>
+      <!-- 用户输入 -->
+      <p>
+        <input
+          type="text"
+          v-model="input"
+          maxlength="1"
+          min="1"
+          step="1"
+        />{{input}}
+      </p>
+      <button @click="getCode">获取</button>
+      <div
+        class="msgCode"
+        v-show="flagCode"
+        @click="cancelClick"
+        style="z-index: 1; background-color: aquamarine; width: 130px;"
+      >
+        <div class="codeMask"></div>
+        <input
+          type="text"
+          maxlength="1"
+          v-model.sync="msgCode.num1"
+          @input="nextCode"
+          index="1"
+          @blur='bulrCode'
+        />
+        <input
+          type="text"
+          maxlength="1"
+          v-model="msgCode.num2"
+          @input="nextCode"
+          index="2"
+          @blur='bulrCode'
+        />
+        <input
+          type="text"
+          maxlength="1"
+          v-model="msgCode.num3"
+          @input="nextCode"
+          index="3"
+          @blur='bulrCode'
+        />
+        <input
+          type="text"
+          maxlength="1"
+          v-model.sync="msgCode.num4"
+          @input="nextCode"
+          index="4"
+          @blur='bulrCode'
+        />
+      </div>
+      <!-- 列表渲染 -->
+      <div v-for="item in coures" :key="item">
+        {{item}}
+      </div>
+    </div>
+    <script>
+      // 1.创建Vue实例
+      const app = new Vue({
+        el: "#app",
+        data() {
+          return {
+            title: "hello,vue!",
+            coures: ["web全栈", "web高级"],
+            input: "",
+            flagCode: false,
+            msgCode: {
+              num1: "",
+              num2: "",
+              num3: "",
+              num4: "",
+            },
+          };
+        },
+        methods: {
+          getCode() {
+            this.flagCode = !this.flagCode;
+            let first = document.querySelector(".msgCode input");
+            console.log("first:", first);
+            setTimeout(function () {
+              first.focus();
+            }, 0);
+          },
+          cancelClick() {
+            setTimeout(function () {
+              let count = 0;
+              console.log(count);
+              for (let v in this.msgCode) {
+                if (!v) {
+                  document.querySelectorAll(".msgCode input")[count].focus();
+                  break;
+                }
+                count++;
+              }
+            });
+          },
+          bulrCode(e){
+            console.log(123)
+            setTimeout(function(){
+                let nodes = document.querySelectorAll(".msgCode input");
+                let active = document.activeElement
+                let flag = false
+                for(let i = 0; i < nodes.length-1;i++){//最后一位的时候可以跳出聚焦
+                    if(active == nodes[i]){
+                        flag = true
+                        console.log('IN=M',nodes[i])
+                        break
+                    }
+                }
+            })
+          },
+          nextCode(e) {
+            let clildren = document.querySelectorAll(".msgCode input");
+            console.log(clildren);
+            let active = document.activeElement;
+            let i = active.getAttribute("index");
+            console.log(typeof i);
+            console.log(e);
+            switch (i) {
+              case "1": {
+                let asciiCode = this.msgCode.num1.charCodeAt();
+                if (asciiCode < 48 || asciiCode > 57) {
+                  this.msgCode.num1 = "";
+                }
+                if (this.msgCode.num1.length > 0) {
+                  console.log("我来了");
+                  clildren[1].focus();
+                }
+                console.log(this.msgCode.num1);
+                break;
+              }
+              case "2": {
+                let asciiCode = this.msgCode.num2.charCodeAt();
+                if (asciiCode < 48 || asciiCode > 57) {
+                  this.msgCode.num2 = "";
+                }
+                if (this.msgCode.num2.length > 0) {
+                  clildren[2].focus();
+                }
+                break;
+              }
+              case "3": {
+                let asciiCode = this.msgCode.num3.charCodeAt();
+                if (asciiCode < 48 || asciiCode > 57) {
+                  this.msgCode.num3 = "";
+                }
+                if (this.msgCode.num3.length > 0) {
+                  clildren[3].focus();
+                }
+                break;
+              }
+              case "4": {
+                let asciiCode = this.msgCode.num4.charCodeAt();
+                if (asciiCode < 48 || asciiCode > 57) {
+                  this.msgCode.num4 = "";
+                }
+                break;
+              }
+            }
+          },
+        },
+      });
+      setTimeout(function () {
+        app.title = "mua~,vue!";
+      }, 5000);
+    </script>
+  </body>
+</html>
