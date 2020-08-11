@@ -19,14 +19,16 @@
         background-color: #f66;
         border: 1px solid #42b983;
       }
+
     </style>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/animate.css@3.5.1" type="text/css"/>
     <script src="vue.js"></script>
   </head>
   <body>
     <div id="app">
       <!-- 插件分发内容 -->
       <!-- <message :show.sync="show" class="success"> -->
-        <message ref="msg-success" class="success">
+      <message ref="msg-success" class="success">
         <!-- 命名为title的插槽 //等号后面是自组件传递过来的对象，自定义-->
         <template v-slot:title="slotProps">
           {{slotProps.title}}
@@ -38,7 +40,7 @@
       </message>
 
       <!-- <message :show.sync="warning" class="warning"> -->
-        <message ref="msg-warning" class="warning">
+      <message ref="msg-warning" class="warning">
         <!-- 命名为title的插槽 //等号后面是自组件传递过来的对象，自定义-->
         <template v-slot:title="slotProps">
           <strong>警告</strong>
@@ -53,7 +55,7 @@
 
       <!-- toolbar -->
       <div>
-          <button @click="$bus.$emit('message-close')">清空提示框</button>
+        <button @click="$bus.$emit('message-close')">清空提示框</button>
       </div>
 
       <!-- 事件监听组件 -->
@@ -86,31 +88,33 @@
         //   },
         // },
         data() {
-            return {
-                show: false
-            }
+          return {
+            show: false,
+          };
         },
         template: `
-            <div class='message-box' v-if="show">
-                <!--具名插槽-->
-                <slot name="title" title='来自子元素'>默认标题</slot>
-                <!-- 通过slot插槽获取传入的内容 -->
-                <slot></slot>
-                <!-- <span class='message-box-close' @click="$emit('update:show',false)">X</span> -->
-                <span class='message-box-close' @click="toggle">X</span>
-            </div>
+            <transition enter-active-class="animated bounceIn" leave-active-class="animated bounceOut">
+                <div class='message-box' v-if="show">
+                    <!--具名插槽-->
+                    <slot name="title" title='来自子元素'>默认标题</slot>
+                    <!-- 通过slot插槽获取传入的内容 -->
+                    <slot></slot>
+                    <!-- <span class='message-box-close' @click="$emit('update:show',false)">X</span> -->
+                    <span class='message-box-close' @click="toggle">X</span>
+                </div>
+            </transition>
           `,
-          mounted () {
-              this.$bus.$on('message-close',()=>{
-                //   this.$emit('update:show',false)
-                this.toggle()
-              });
+        mounted() {
+          this.$bus.$on("message-close", () => {
+            //   this.$emit('update:show',false)
+            this.toggle();
+          });
+        },
+        methods: {
+          toggle() {
+            this.show = !this.show;
           },
-          methods: {
-              toggle() {
-                  this.show = !this.show
-              }
-          },
+        },
       });
       //课程列表组件
       Vue.component("course-list", {
@@ -168,8 +172,8 @@
             this.$emit("change", e.target.value);
           },
         },
-        mounted () {
-            this.$refs.inp.focus();
+        mounted() {
+          this.$refs.inp.focus();
         },
       });
       //模拟异步数据的调用
@@ -189,7 +193,6 @@
             courses: [],
             course: "",
             price: 0,
-            
           };
         },
         //组件实例已创建，由于未挂载，dom不存在，不能操作dom
@@ -205,9 +208,7 @@
             return this.courses.length + "门";
           },
         },
-        mounted () {
-            
-        },
+        mounted() {},
         methods: {
           batchUpdate() {
             this.courses.forEach((element) => {
@@ -217,16 +218,16 @@
           addCourse() {
             console.log(this.course);
             if (this.course) {
-              this.courses.push({name : this.course});
+              this.courses.push({ name: this.course });
               this.course = "";
               //显示提示信息
-            //   this.show = true;
-            this.$refs['msg-success'].toggle()
+              //   this.show = true;
+              this.$refs["msg-success"].toggle();
             } else {
               this.course = "";
               //显示提示信息
-            //   this.warning = true;
-            this.$refs['msg-warning'].toggle()
+              //   this.warning = true;
+              this.$refs["msg-warning"].toggle();
             }
           },
         },
