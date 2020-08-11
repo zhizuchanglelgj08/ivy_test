@@ -22,7 +22,7 @@
       <message :show.sync="show">
         <!-- 命名为title的插槽 //等号后面是自组件传递过来的对象，自定义-->
         <template v-slot:title="slotProps">
-            {{slotProps.title}}
+          {{slotProps.title}}
         </template>
         <!-- 默认插槽内容 或者不屑v-slot：defalut -->
         <template v-slot:default>
@@ -88,6 +88,10 @@
       });
       //课程新增
       Vue.component("course-add", {
+        model: {//vue默认定义的值。可根据需求进行修改
+          prop: "value",
+          event: "change",
+        },
         props: {
           value: {
             type: String,
