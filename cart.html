@@ -15,7 +15,8 @@
         {{title}}
       </h2>
       <!-- 事件监听组件 -->
-      <course-add @add-course="addCourse"></course-add>
+      <course-add v-model='course' @add-course="addCourse"></course-add>
+      <!-- <course-add :value='course' @input="course=$event" @add-course="addCourse"></course-add> -->
 
       <!-- 列表组件 -->
       <course-list :courses="courses"></course-list>
@@ -52,10 +53,15 @@
       });
       //课程新增
       Vue.component("course-add", {
-        props: {},
+        props: {
+            value:{
+                type:String,
+                default:''
+            }
+        },
         data() {
           return {
-            course: "",
+    
           };
         },
         template: `
@@ -63,16 +69,22 @@
             <div>
                 <input
                 type="text"
-                v-model="course"
+                :vlue = "value"
+                @input = "onInput"
                 @keydowm.enter="addCourse"
-                />{{course}}
+                />
                 <button @click="addCourse">新增</button>
             </div>
           `,
           methods: {
               addCourse() {
-                  this.$emit('add-course',this.course)
-                  this.course = ''
+                  this.$emit('add-course')
+                //   this.course = ''
+              },
+              onInput(e){
+                  console.log(e.target.value)
+                  this.$emit('input',e.target.value)
+                  console.log(e.target.value)
               }
           },
       });
@@ -102,11 +114,13 @@
           return {
             title: "购物车!",
             courses: [],
+            course:''
           };
         },
         methods: {
-          addCourse(course) {
-            this.courses.push(course);
+          addCourse() {
+            this.courses.push(this.course);
+            this.course = ''
           },
         },
       });

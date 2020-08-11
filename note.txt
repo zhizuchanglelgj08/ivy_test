@@ -19,3 +19,4 @@
 
 组件化
     组件注册、使用及数据传递
+    自定义v-model语法糖  父组件上v-model  =》 到自组件中   v-on:input = "$emit('input',e.target.value)"  + :value = 'value'
