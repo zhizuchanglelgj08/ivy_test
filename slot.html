@@ -3,19 +3,26 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>购物车</title>
-  </head>
-  <style></style>
-  <body>
+    <title>内容分发</title>
+    <style>
+      .message-box {
+        padding: 10px 20px;
+        background-color: #4fc08d;
+        border: 1px solid #42b983;
+      }
+      .message-box-close {
+        float: right;
+      }
+    </style>
     <script src="vue.js"></script>
-    <!-- 宿主文件 -->
+  </head>
+  <body>
     <div id="app">
-      <h2 :title="title">
-        <!-- 插值文本 -->
-        {{title}}
-      </h2>
+      <!-- 插件分发内容 -->
+      <message :show.sync="show">新增课程成功！</message>
+      <h2>插槽分发内容</h2>
       <!-- 事件监听组件 -->
-      <course-add v-model='course' @add-course="addCourse"></course-add>
+      <course-add v-model.sync="course" @add-course="addCourse"></course-add>
       <!-- <course-add :value='course' @input="course=$event" @add-course="addCourse"></course-add> -->
 
       <!-- 列表组件 -->
@@ -28,7 +35,24 @@
         课程总数：{{totalCount}}
       </p>
     </div>
+
     <script>
+      //分发内容
+      Vue.component("message", {
+        props: {
+          show: {
+            type: Boolean,
+            default: false,
+          },
+        },
+        template: `
+            <div class='message-box' v-if="show">
+                <!-- 通过slot插槽获取传入的内容 -->
+                <slot></slot>
+                <span class='message-box-close' @click="$emit('update:show',false)">X</span>
+            </div>
+          `,
+      });
       //课程列表组件
       Vue.component("course-list", {
         props: {
@@ -54,38 +78,31 @@
       //课程新增
       Vue.component("course-add", {
         props: {
-            value:{
-                type:String,
-                default:''
-            }
-        },
-        data() {
-          return {
-    
-          };
+          value: {
+            type: String,
+            default: "",
+          },
         },
         template: `
           <!-- 用户输入 -->
             <div>
                 <input
+                type="text"
                 :value = "value"
                 @input = "onInput"
                 @keydowm.enter="addCourse"
                 />
-                <button @click="addCourse">新增课程</button>
+                <button @click="addCourse">新增</button>
             </div>
           `,
-          methods: {
-              addCourse() {
-                  this.$emit('add-course')
-                //   this.course = ''
-              },
-              onInput(e){
-                  console.log(e.target.value)
-                  this.$emit('input',e.target.value)
-                  console.log(e.target.value)
-              }
+        methods: {
+          addCourse() {
+            this.$emit("add-course");
           },
+          onInput(e) {
+            this.$emit("input", e.target.value);
+          },
+        },
       });
       //模拟异步数据的调用
       function getCourses() {
@@ -95,10 +112,15 @@
           }, 2000);
         });
       }
-      // 1.创建Vue实例
       const app = new Vue({
         el: "#app",
-        mounted() {},
+        data() {
+          return {
+            show: false,
+            courses: [],
+            course: "",
+          };
+        },
         //组件实例已创建，由于未挂载，dom不存在，不能操作dom
         async created() {
           const courses = await getCourses();
@@ -109,23 +131,15 @@
             return this.courses.length + "门";
           },
         },
-        data() {
-          return {
-            title: "购物车!",
-            courses: [],
-            course:''
-          };
-        },
         methods: {
           addCourse() {
             this.course.trim() && this.courses.push(this.course);
-            this.course = ''
+            this.course = "";
+            //显示提示信息
+            this.show = true;
           },
         },
       });
-      setTimeout(function () {
-        app.title = "mua~,vue!";
-      }, 5000);
     </script>
   </body>
 </html>
