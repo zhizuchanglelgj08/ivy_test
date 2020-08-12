@@ -70,10 +70,52 @@ Vue必会API盘点
             当v-for用于元素或组件时，引用信息将包含DOM节点或组件实例的数组
         }
 
-过渡&动画
+Vue过渡&动画
     Vue在插入、更新或移除DOM时，提供多种不同方式的应用过渡效果。
     包括一下工具： 
         1.在CSS过渡和动画中自应用class
         2.可以配合第三方CSS动画库，如Animate.css
         3.在过渡钩子函数中使用JavaScript直接操作DOM
         4.可以配合使用第三方JavaScript动画库，如Velocity.js
+
+Vue可复用性
+    过滤器  (Vue.js 允许你自定义过滤器，可被用于一些常见的文本格式化。)
+        在双花括号中
+            {{rawId ｜ rawId}}
+        在 v-bind 中
+            <div v-bind:id ="rawId | formatId" ></div>
+
+        {{ c.price | currency('RMB')}}
+        filter:{
+            currency(value,symbol = '¥'){
+                return symbol + value
+            }
+        }
+        全局 Vue.filter(name,callback)
+        组件 fliter:{
+            name(value){
+                return value
+            }
+        }
+
+    自定义指令（使用场景：对普通DOM元素进行底层操作）Vue.directive()
+        E.g:{
+            输入框获取焦点
+            Vue.directive('focus',{
+                inserted(el){
+                    el.focus();
+                }
+            })
+            使用 <input v-focus />
+
+            按钮权限控制
+            const role = 'user';
+            Vue.directive('permission',{
+                inserted(el){
+                    if(role !== 'admin'){
+                        el.parentElement.removeChild(el)
+                    }
+                }
+            })
+            使用 <div class="toolbar" v-permission="'admin'">  注意
+        }

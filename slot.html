@@ -52,7 +52,7 @@
       <h2>插槽分发内容</h2>
 
       <!-- toolbar -->
-      <div>
+      <div v-permission:user>
           <button @click="$bus.$emit('message-close')">清空提示框</button>
       </div>
 
@@ -77,6 +77,19 @@
     <script>
       //总线
       Vue.prototype.$bus = new Vue();
+      //实现自定义指令
+      Vue.directive('focus', {
+        //钩子函数
+        inserted(el){
+          el.focus();
+          console.log(arguments)
+        }
+      });
+      Vue.directive('permission',{
+        inserted(el,binding){
+          console.log(binding)
+        }
+      })
       //分发内容
       Vue.component("message", {
         // props: {
@@ -156,6 +169,7 @@
                 @input = "onInput"
                 @keydowm.enter="addCourse"
                 ref ="inp"
+                v-focus
                 />
                 <button @click="addCourse">新增</button>
             </div>
@@ -169,7 +183,7 @@
           },
         },
         mounted () {
-            this.$refs.inp.focus();
+            // this.$refs.inp.focus();
         },
       });
       //模拟异步数据的调用
