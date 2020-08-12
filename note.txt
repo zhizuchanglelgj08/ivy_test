@@ -98,7 +98,7 @@ Vue可复用性
             }
         }
 
-    自定义指令（使用场景：对普通DOM元素进行底层操作）Vue.directive()
+自定义指令（使用场景：对普通DOM元素进行底层操作）Vue.directive()
         E.g:{
             输入框获取焦点
             Vue.directive('focus',{
@@ -119,3 +119,164 @@ Vue可复用性
             })
             使用 <div class="toolbar" v-permission="'admin'">  注意
         }
+
+渲染函数
+    
+
+    Vue绝大多数情况下使用模版创建Html。然而在一些场景中，你真的需要 JavaScript 的 完全编程的能力。
+    这时你可以用渲染函数，它比模板更接近编译器。
+    基础：「
+        render : function (createElement) {
+            //createElement 函数返回结果是Vnode
+            return createElement(
+                tag,  //标签名称
+                data, //传递数据
+                children，//子节点数组
+            )
+        }
+    」
+    E.g: {
+        //heading组件
+        //原型： <h2 title='ivy' > 插槽分发内容 </h2>
+        //组件化：<heading :level="2" :title='title'>{{title}}</heading>
+        
+        Vue.component('heading', { 
+            props: {
+                level:{
+                    type:String,
+                    required: true
+                },
+                title:{
+                    type:String,
+                    default:''
+                }
+            }, 
+            render(h) {         //createElement
+                return h(
+                    'h'+this.level, //参数1:tagname
+                    {attrs : { title : this.title }},//参数2:传递数据 也可以省略attrs简写
+                    this.$slots.default, //参数3:子节点Vnode数组
+                )
+            } 
+        })
+    }
+
+虚拟DOM （Vue 通过建立一个虚拟 DOM 来追踪自己要如何改变真实 DOM。）
+    Vue.component('heading', {
+        props: ['level', 'title', 'icon'], 
+        render(h) {          
+        let children = [];
+        // 添加图标功能
+        // <svg><use xlink:use="#icon-xxx"></use></svg> 
+        if (this.icon) {
+            children.push(h( 'svg',{ class: 'icon' },
+                    [h('use', { attrs: { 'xlink:href': '#icon-' + this.icon } })])) 
+            children = children.concat(this.$slots.default)
+        }
+        vnode = h(
+            'h' + level,
+            { attrs: { this.title } }, 
+            // 之前省略了title的处理 
+            children
+        )
+        return vnode
+} })
+
+函数式组件
+    组件没有管理任何状态，也没有监听任何传递给它的状态，也没有生命周期方法时，可以将组件标记为 functional ，
+    这意味它无状态 (没有响应式数据)，也没有实例 (没有 this 上下文)。
+    Vue.component('heading', { 
+        functional: true, //标记函数式组件
+        props: {
+                level:{
+                    type:String,
+                    required: true
+                },
+                title:{
+                    type:String,
+                    default:''
+                }
+            }, 
+        render(h, context) { 
+                //上下文传参
+                let children = [];
+                // 属性获取
+                const {icon, title, level} = context.props 
+                if (icon) {
+                    children.push(h( 'svg',{ class: 'icon' },
+                        [h('use', { attrs: { 'xlink:href': '#icon-' + icon } })])) 
+                        // 子元素获取
+                    children = children.concat(context.children)
+                }
+                vnode = h('h' + level,{ attrs: { title } },children) 
+                return vnode
+        }
+    }
+
+混入Mixin   
+    混入 (mixin) 提供了一种非常灵活的方式，来分发 Vue 组件中的可复用功能。
+    一个混入对象可以包含任意组件选项。当组件使用混入对象时，所有混入对象的选项将被“混合”进入该组件本身的选项。
+    // 定义一个混入对象 
+    var myMixin = {
+        created: function () { 
+            this.hello()
+        }, 
+        methods: {
+            hello: function () { 
+                console.log('hello from mixin!')
+            } 
+        }
+    }
+
+    // 定义一个使用混入对象的组件 
+    Vue.component('temp', {
+        mixins: [myMixin]
+    })
+
+插件
+    插件通常用来为 Vue 添加全局功能。插件的功能范围一般有下面几种:「
+        1. 添加全局方法或者属性。如: vue-custom-element
+        2. 添加全局资源:指令/过滤器/过渡等。如 vue-touch
+        3. 通过全局混入来添加一些组件选项。如 vue-router
+        4. 添加 Vue 实例方法，通过把它们添加到 Vue.prototype 上实现。
+        5. 一个库，提供自己的 API，同时提供上面提到的一个或多个功能。如 vue-router
+    」
+
+    插件声明
+     Vue.js 的插件应该暴露一个 install 方法。这个方法的第一个参数是 Vue 构造器，第二个参数是一 个可选的选项对象:
+        MyPlugin.install = function (Vue, options) { 
+            // 1. 添加全局方法或属性
+            Vue.myGlobalMethod = function () {}
+            // 2. 添加全局资源 
+            Vue.directive('my-directive', {})
+            // 3. 注入组件选项 
+            Vue.mixin({
+                created: function () { 
+                // 逻辑...
+                } 
+            })
+            // 4. 添加实例方法
+            Vue.prototype.$myMethod = function (methodOptions) {} 
+        }
+
+        E.g:「
+            //注册插件
+            const MyPlugin = {
+                install (Vue, options) {
+                    Vue.component('heading', {...}) 
+                }
+            }
+
+            //使用插件
+            if (typeof window !== 'undefined' && window.Vue) { 
+                window.Vue.use(MyPlugin)
+            }
+        」
+
+Vue工程化  vue cli
+    你可以使用 vue serve 和 vue build 命令对单个 *.vue 文件进行快速原型开发
+    安装cli全局扩展    npm install -g @vue/cli-service-global
+
+    启动一个服务并运行原型 ： vue server ‘project name’  ，可以是单个vue页面
+    创建一个vue项目：vue create ‘project name’ 
+    图形化项目管理： vue ui
