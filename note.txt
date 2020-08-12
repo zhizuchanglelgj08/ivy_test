@@ -280,3 +280,54 @@ Vue工程化  vue cli
     启动一个服务并运行原型 ： vue server ‘project name’  ，可以是单个vue页面
     创建一个vue项目：vue create ‘project name’ 
     图形化项目管理： vue ui
+
+    vue cli插件
+        E.g:「
+            //在现有项目中添加 vue-router插件
+            vue add router
+        」
+
+静态地址使用方式
+    处理资源路径
+    当你在 JavaScript、CSS 或 *.vue 文件中使用相对路径(必须以 . 开头)引用一个静态资源时，该资源将被webpack处理。
+
+    转换规则：「
+                1、如果 URL 是一个绝对路径 (例如 /images/foo.png )，它将会被保留不变。
+                2、如果 URL 以 . 开头会作为一个相对模块请求被解释并基于文件系统相对路径。
+                3、如果 URL 以 ~ 开头会作为一个模块请求被解析。这意味着你甚至可以引用 Node 模块中的资源。
+                4、如果 URL 以 @ 开头会作为一个模块请求被解析。Vue CLI 默认会设置一个指向 src 的别名 @ 。
+        」
+
+    何时使用 public 文件夹（绝对路径）
+        通过 webpack 的处理并获得如下好处:
+            1、脚本和样式表会被压缩且打包在一起，从而避免额外的网络请求。 
+            2、文件丢失会直接在编译时报错，而不是到了用户端才产生 404 错误。 
+            3、最终生成的文件名包含了内容哈希，因此你不必担心浏览器会缓存它们的老版本。
+        如下情况考虑使用public文件夹
+            1、你需要在构建输出中指定一个固定的文件名字。
+            2、你有上千个图片，需要动态引用它们的路径。
+            3、有些库可能和 webpack 不兼容，除了将其用一个独立的 <script> 标签引入没有别的选择。
+        
+    使用public文件夹的注意事项/步骤
+        1、如果你的应用没有部署在域名的根部，那么你需要为你的 URL 配置 publicPath 前缀
+        配置 vue.config.js :「
+                // vue.config.js
+                module.exports = {
+                    publicPath: process.env.NODE_ENV === 'production'
+                    ? '/cart/'
+                    : '/' 
+                }
+        」
+        2、在 public/index.html 等通过 html-webpack-plugin 用作模板的 HTML 文件中，
+        你需要通过 <%= BASE_URL %> 设置链接前缀:
+            「
+                <img :src=`${publicPath} + URL`
+            」
+        3、在模板中，先向组件传入BASE_URL:
+            「
+                data () {
+                    return {
+                        publicPath: process.env.BASE_URL 
+                    }
+                }
+            」
