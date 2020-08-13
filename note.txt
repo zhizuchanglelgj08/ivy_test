@@ -409,3 +409,45 @@ CSS Module
             }
         </script>
     」
+
+数据Mock和接口请求代理
+    数据模拟    使用开发服务器配置before选项，可以编写接口，提供模拟数据。
+        vue.config.js配置:「
+                module.exports = {
+                    devServer:{
+                        before(app) {
+                            //app是一个node express实例
+                            app.get('/api/courses', (req, res) => {
+                                res.json([{ name: 'web全栈', price: 8999 }, { name: 'web高级', price:8999 }]) 
+                            })
+                        } 
+                    }
+                }
+        」
+
+    代理     设置开发服务器代理选项可以有效避免调用接口时出现的跨域问题。
+            当本地静态地址不存在时，会通过代理转发该地址
+        vue.config.js配置:「
+            module.exports = {
+                devServer: {
+                    proxy: 'http://localhost:3000',
+                },
+            }
+        」
+        测试接口:「
+            // 需要安装express:npm i express 
+            const express = require('express') 
+            const app = express()
+            app.get('/api/courses', (req, res) => {
+                res.json([{ name: 'web全栈', price: 8999 }, { name: 'web高级', price: 8999 }])
+            }) 
+            app.listen(3000)
+        」
+
+        调用:「
+            // axios:npm i axios -S
+            import axios from 'axios'
+            export function getCourses() {
+                return axios.get('/api/courses').then(res => res.data)
+            }
+        」
