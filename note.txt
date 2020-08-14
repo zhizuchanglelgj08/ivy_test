@@ -451,3 +451,40 @@ CSS Module
                 return axios.get('/api/courses').then(res => res.data)
             }
         」
+
+Vue-Router
+    安装    vue add router
+    基础用法
+        路由规划、配置      router/index.js
+        路由出口： <router-view></route-view>
+
+    动态路由规则
+    
+    通配符  适合做404页面路由
+        {
+            // 会匹配所有路径
+            path: '*',
+            component: () => import('../views/404.vue')
+        }
+
+    嵌套路由
+        实际生活中的应用界面，通常由多层嵌套的组件组合而成。同样地，URL 中各段动态路径也按某种结构 对应嵌套的各层组件。
+        有嵌套路由就必须有该级路由出口 
+
+    编程导航
+        router.push(location, onComplete?, onAbort?)
+        E.g:「
+            // 字符串 
+            router.push('home')
+            // 对象
+            router.push({ path: 'home' })
+            // 命名的路由
+            router.push({ name: 'user', params: { userId: '123' }})
+            // 带查询参数，变成 /register?plan=private
+            router.push({ path: 'register', query: { plan: 'private' }})
+        」
+
+    组件复用时注意事项
+        路由切换，组件没有变化时，组件不会销毁重新创建
+
+    路由导航守卫
