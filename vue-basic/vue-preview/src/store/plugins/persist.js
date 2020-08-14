@@ -8,7 +8,7 @@ export default store => {
   }
 
   // 如果用户相关状态发生变化，自动存入localStoreage
-  store.subscribe((mutation, state) => {注册一个//mutation监听器
+  store.subscribe((mutation, state) => {//注册一个mutation监听器
     // {type:'user/login'}
     // {type:'user/logout'}
     // {type:'cart/addCart'}
