@@ -24,7 +24,9 @@ import { mapState, mapGetters } from "vuex";
 import FormTest from "@/components/FormTest.vue";
 export default {
   mounted () {
+    
     console.log('mapState:',mapState("user", ["isLogin"]));
+    console.log(this['add1'])
   },
   name: "app",
   computed: {
@@ -33,7 +35,12 @@ export default {
   },
   components: {
     FormTest
-  }
+  },
+  methods: {
+    add1(v) {
+      alert(v)
+    }
+  },
 };
 </script>
 
