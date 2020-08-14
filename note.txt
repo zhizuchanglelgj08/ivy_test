@@ -485,6 +485,176 @@ Vue-Router
         」
 
     组件复用时注意事项
-        路由切换，组件没有变化时，组件不会销毁重新创建
+        在一个循环复用的组件内进行路由切换，组件不会销毁重新创建
+        E.g:「
+            created(){//不会多次调用，只会调用一次
+                //
+            }
+        」
 
     路由导航守卫
+        vue-router 提供的导航守卫主要用来通过跳转或取消的方式守卫导航。有多种机会植入路由导航过程 中:全局的, 单个路由独享的, 或者组件级的。
+        全局守卫    beforeEach守卫在router/index.js中定义
+            E.g:「
+                router.beforeEach((to, from, next) => { // ...
+                // to: Route: 即将要进入的目标 路由对象
+                // from: Route: 当前导航正要离开的路由
+                // next: Function: 一定要调用该方法来 resolve 这个钩子。
+                })
+            」
+         路由独享的守卫    可以路由配置上直接定义 beforeEnter 守卫
+         组件内守卫    可以在路由组件内直接定义以下路由导航守卫:  beforeRouteEnter、beforeRouteUpdate、beforeRouteLeave
+
+    数据获取时机
+        路由激活时，获取数据的时机有两个:
+            1、路由导航前:「
+                // 组件未渲染，通过给next传递回调访问组件实例 
+                beforeRouteEnter (to, from, next) { 
+                    getPost(to.params.id, post => {
+                            next(vm => vm.setData(post)) 
+                    })
+                },
+                // 组件已渲染，可以访问this直接赋值 
+                beforeRouteUpdate (to, from, next) {
+                    this.post = null getPost(to.params.id, post => {
+                        this.setData(post);
+                        next() 
+                    })
+                },
+            」
+            2、路由导航后:「
+                created () { 
+                    this.fetchData()
+                }, 
+                watch: {
+                    '$route': 'fetchData'
+                }
+            」
+    
+    动态添加路由    通过router.addRoutes(routes)方式动态添加路由
+        E.g:「
+            this.$router.addRoutes([ {
+            path: "/about", //... }
+            ]);
+        」
+
+    路由组件缓存
+        利用keepalive做组件缓存，保留组件状态，提高执行效率
+        E.g:「
+            //范例:缓存about组件 name为组件名 max最大缓存组件数
+            <keep-alive include="name1,name2"> 
+                <router-view></router-view>
+            </keep-alive>
+
+            <keep-alive :include="['name1','name2']" max='10'> 
+                <router-view></router-view>
+            </keep-alive>
+        」
+        使用include或exclude时要给组件设置name 
+        使用keep-alive时，组件的两个特别的生命周期:activated、deactivated
+
+    路由懒加载
+        路由组件的懒加载能把不同路由对应的组件分割成不同的代码块，然后当路由被访问的时候才加载对应组件，这样就更加高效了。
+        () => import("../views/About.vue")
+
+Vuex 统一状态管理
+    Vuex 是一个专为 Vue.js 应用程序开发的状态管理模式。
+    它采用集中式存储管理应用的所有组件的状态，并以相应的规则保证状态以可预测的方式发生变化。（比如登录状态）
+    安装  vue add vuex
+
+    State
+         将应用全局状态定义在state中  store.js 或者 store/index.js
+        「
+            state: {
+                isLogin: false
+            }
+        」
+
+    Mutation
+        修改state只能通过mutation
+        「
+            mutations: {
+                login(state) {
+                    state.isLogin = true 
+                },
+                logout(state) { 
+                    state.isLogin = false
+                } 
+            },
+        」
+
+    获取和修改状态
+        使用store.state获取状态
+        「
+            <button @click="login" v-if="!$store.state.isLogin">登录</button>
+            <button @click="logout" v-else>登出</button>
+        」
+        修改状态只能通过store.dispatch(mutation)
+        「
+            this.$store.commit('login')
+            this.$store.commit('logout')
+        」
+
+    Action
+        Action 类似于 mutation，不同在于:
+            1、Action 提交的是 mutation，而不是直接变更状态。
+            2、Action 可以包含任意异步操作。
+        E.g:「
+            //参数1是vuex传递的上下文context对象 => {commit,dispatch，state}，这里用的是解构
+            login({commit}, username) {
+                return new Promise((resolve, reject) => {
+                    setTimeout(() => {
+                        if (username === 'admin') {
+                            commit('login'); //这个login是state中
+                            resolve();
+                        } else {
+                             reject() 
+                        }
+                    }, 1000); 
+                })
+            }
+
+            //派发动作，触发actions      这个login是actions中
+            $store.dispatch('login','admin').then(()=>{}).catch(()=>{})
+        」
+    modules模块化
+        使用modules定义多个子模块利于组件复杂状态
+        「
+            import user from './user'
+            export default new Vuex.Store({ 
+                modules: {
+                    user, 
+                }
+            })
+        」
+        「
+            //移动先前登录状态相关代码到user.js
+            export default {
+                namespaced: true, // 避免命名冲突 // ...
+            }
+        」
+        访问方式响应变化：「
+            $store.state.user.isLogin
+            this.$store.commit('user/login')
+            $store.dispatch('user/login','admin').then(()=>{}).catch(()=>{})
+        」
+
+    mapState()/mapMutation()/mapAction()
+        通过这些映射方法可以让大家少敲几个字，避免对$store直接访问.
+        「
+            //state相关修改
+            import { mapState } from 'vuex'
+            computed: {
+             ...mapState('user', ['isLogin'])
+            }
+            <button @click="login" v-if="!isLogin">登录</button>
+
+            //action相关修改
+            import { mapActions } from 'vuex'
+            methods: {
+                login() {
+                    this['user/login']('admin').then(...) 
+                },
+                ...mapActions(['user/login', 'user/logout'])
+            },
+        」
