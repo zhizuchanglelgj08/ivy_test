@@ -5,7 +5,7 @@
       <router-link to="/admin">管理</router-link>
 
       <span v-if="isLogin">
-        {{welcome}}
+        {{ welcome }}
         <button>注销</button>
       </span>
     </nav>
@@ -23,23 +23,32 @@
 import { mapState, mapGetters } from "vuex";
 import FormTest from "@/components/FormTest.vue";
 export default {
-  mounted () {
-    
-    console.log('mapState:',mapState("user", ["isLogin"]));
-    console.log(this['add1'])
+  provide() {
+    return {
+      bla: this.text,
+    };
+  },
+  data() {
+    return {
+      text: 'ivy,blabla'
+    }
+  },
+  mounted() {
+    console.log("mapState:", mapState("user", ["isLogin"]));
+    console.log(this["add1"]);
   },
   name: "app",
   computed: {
     ...mapState("user", ["isLogin"]),
-    ...mapGetters("user", ["welcome"])
+    ...mapGetters("user", ["welcome"]),
   },
   components: {
-    FormTest
+    FormTest,
   },
   methods: {
     add1(v) {
-      alert(v)
-    }
+      alert(v);
+    },
   },
 };
 </script>

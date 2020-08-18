@@ -50,6 +50,10 @@
 </template>
 <script>
   export default {
+    inject:['bla'],
+    mounted () {
+      console.log(this.bla);
+    },
     data() {
       return {
         ruleForm: {

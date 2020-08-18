@@ -5,7 +5,7 @@
     <message ref="msgSuccess" class="success">
       <!-- 命名为title插槽内容 -->
       <template v-slot:title="slotProps">
-        <strong>{{slotProps.title}}</strong>
+        <strong>{{ slotProps.title }}</strong>
       </template>
       <!-- 默认插槽内容 -->
       <template v-slot:default>新增课程成功!</template>
@@ -35,18 +35,19 @@ import Message from "@/components/Message.vue";
 import { getCourses } from "@/api/course";
 
 export default {
-  name: 'admin',
+  name: "admin",
   components: {
     CourseList,
     CourseAdd,
-    Message
+    Message,
   },
   data() {
     return {
+      text: "ivy,blabla",
       title: "开课吧购物车",
       course: "",
       courses: [],
-      publicPath: process.env.BASE_URL
+      publicPath: process.env.BASE_URL,
     };
   },
   async created() {
@@ -69,15 +70,14 @@ export default {
         // this.showWarn = true
         this.$refs.msgWarning.toggle();
       }
-    }
+    },
   },
   activated() {
-    console.log('activated');
-    
+    console.log("activated");
   },
   deactivated() {
-    console.log('deactivated');
-  }
+    console.log("deactivated");
+  },
   // beforeRouteEnter(to, from, next) {
   //   if (window.isLogin) {
   //     next();

@@ -19,9 +19,13 @@
 <script>
 export default {
   props: ["val"],
+  inject:['bla'],
   model: {
     prop: "val",
     event: "change"
+  },
+  mounted () {
+    console.log('bla',this.bla)
   },
   methods: {
     addCourse() {

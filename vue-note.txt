@@ -22,7 +22,13 @@
     自定义v-model语法糖  父组件上v-model  =》 到自组件中   v-on:input = "$emit('input',e.target.value)"  + :value = 'value'
 
 插槽分发内容
-    具名插槽v-slot:name
+    匿名插槽 <slot></slot>
+            // 命名为text的插槽 //等号后面是自组件传递过来的对象，自定义
+    具名插槽 <template v-slot:text=‘a’>
+                {{a.**}}
+            </template> 
+            <slot name='text' **=‘123’>
+            </slot>
 
 Vue组件化的理解
     定义:组件是可复用的 Vue 实例，准确讲它们是VueComponent的实例，继承自Vue。 
