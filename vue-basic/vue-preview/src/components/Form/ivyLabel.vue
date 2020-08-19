@@ -13,6 +13,7 @@
 <script>
 import Schema from "async-validator";
 export default {
+  name:'ivyLabel',
   components: {},
   props: {
     label: {
@@ -40,6 +41,7 @@ export default {
   },
   methods: {
     validate() {
+      console.log('form',this.form)
       //执行组件校验
       //1、获取校验规则
       const rules = this.form.rules[this.prop];
@@ -49,10 +51,9 @@ export default {
       const desc = {
         [this.prop]: rules,
       };
-      console.log(this.prop);
       const schema = new Schema(desc);
-      //参数1是值，参数2
-      schema.validate({ [this.prop]: value }, (errors) => {
+      //参数1是值，参数2    返回的是一个Promise对象
+      return schema.validate({ [this.prop]: value }, (errors) => {
         if (errors) {
           this.errorMessage = errors[0].message;
         } else {

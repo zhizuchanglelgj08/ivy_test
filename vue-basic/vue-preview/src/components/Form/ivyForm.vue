@@ -21,9 +21,20 @@ export default {
     },
   },
   methods: {
-      validate(callback) {
-          
-      }
+    validate(callback) {
+      //map的结果是若干promise数组
+      const tasks = this.$children
+        .filter((item) => item.prop && item.$options._componentTag == "ivyLabel")
+        .map((item) => item.validate());
+
+      Promise.all(tasks)
+        .then(() => {
+          callback(true);
+        })
+        .catch(() => {
+          callback(false);
+        });
+    },
   },
 };
 </script>

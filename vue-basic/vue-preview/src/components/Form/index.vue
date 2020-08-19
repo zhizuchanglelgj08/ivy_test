@@ -1,17 +1,17 @@
 <template>
   <div>
-    <ivyForm :model='model' :rules='rules' ref='loginForm'>
-      <ivyLabel label="用户名" prop='username'>
+    <ivyForm :model="model" :rules="rules" ref="loginForm">
+      <ivyLabel label="用户名" prop="username">
         <ivyInput v-model="model.username"></ivyInput>
       </ivyLabel>
-      <ivyLabel label="密码" prop='password'>
-        <ivyInput v-model="model.password" type="password" ></ivyInput>
+      <ivyLabel label="密码" prop="password">
+        <ivyInput v-model="model.password" type="password"></ivyInput>
+      </ivyLabel>
+      <ivyLabel>
+        <button @click="onLogin">登录</button>
       </ivyLabel>
       {{ model }}
-    </ivyForm> 
-    <ivyLabel>
-        <button @click='onLogin'>登录</button>
-    </ivyLabel>
+    </ivyForm>
   </div>
 </template>
 
@@ -31,22 +31,25 @@ export default {
         username: "ivy",
         password: "",
       },
-      rules:{
-          username:[{required:true,message:'用户名必填！'}],
-          password:[{required:true,message:'密码必填！'}],
-      } 
+      rules: {
+        username: [
+          { required: true, message: "用户名必填！", trigger: "blur" },
+        ],
+        password: [{ required: true, message: "密码必填！", trigger: "blur" }],
+      },
     };
   },
   methods: {
-      onLogin() {
-          this.$refs['loginForm'].validate((isValid)=>{
-              if(isValid){
-                  alert('登录')
-              }else{
-                  alert('有错')
-              }
-          })
-      }
+    onLogin() {
+      this.$refs["loginForm"].validate((isValid) => {
+        
+        if (isValid) {
+          alert("登录成功！");
+        } else {
+          alert("登录失败！");
+        }
+      });
+    },
   },
 };
 </script>

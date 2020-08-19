@@ -92,6 +92,34 @@ Vue组件化的理解
                     //实践中可以用Vue代替Bus，因为它已经实现了相应功能
                 」
                 vuex:创建唯一的全局数据管理者store，通过它管理数据并通知组件状态变更
+    
+    递归组件
+        递归组件是可以在它们自己模版中调用自身的组件
+        E.g:「
+                // Node.vue
+                <template>
+                    <div>
+                        <h3>{{data.title}}</h3>
+                        <!-- 有条件嵌套 -->
+                        <Node v-for="d in data.children" :key="d.id" :data="d"></Node>
+                    </div>
+                </template>
+
+                <script>
+                    export default {
+                        name: 'Node', // name对递归组件是必要的 
+                        props: {
+                            data: {
+                                type: Object,
+                                require: true
+                            },
+                        }, 
+                    }
+                </script>
+                
+                // 使用
+                <Node :data="{id:'1',title:'递归组件',children:[{...}]}"></Node>
+        」
 
 Vue必会API盘点
     数据相关Api
