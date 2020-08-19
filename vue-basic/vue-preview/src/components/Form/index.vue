@@ -12,10 +12,14 @@
       </ivyLabel>
       {{ model }}
     </ivyForm>
+    <br />
+    <br />
+    <ivyTree :data="treeData"></ivyTree>
   </div>
 </template>
 
 <script>
+import ivyTree from "./ivyTree";
 import ivyInput from "./ivyInput";
 import ivyLabel from "./ivyLabel";
 import ivyForm from "./ivyForm";
@@ -24,12 +28,47 @@ export default {
     ivyInput,
     ivyLabel,
     ivyForm,
+    ivyTree,
   },
   data() {
     return {
       model: {
         username: "ivy",
         password: "",
+      },
+      treeData: {
+        id: 1,
+        title: "1",
+        children: [
+          {
+            id: 11,
+            title: "11",
+            children: [
+              {
+                id: 111,
+                title: "111",
+              },
+              {
+                id: 112,
+                title: "112",
+              },
+            ],
+          },
+          {
+            id: 12,
+            title: "12",
+            children: [
+              {
+                id: 121,
+                title: "121",
+              },
+              {
+                id: 122,
+                title: "122",
+              },
+            ],
+          },
+        ],
       },
       rules: {
         username: [
@@ -42,7 +81,6 @@ export default {
   methods: {
     onLogin() {
       this.$refs["loginForm"].validate((isValid) => {
-        
         if (isValid) {
           alert("登录成功！");
         } else {
