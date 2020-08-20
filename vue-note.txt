@@ -19,8 +19,39 @@
 
 组件化
     组件注册、使用及数据传递
-    自定义v-model语法糖  父组件上v-model  =》 到自组件中   v-on:input = "$emit('input',e.target.value)"  + :value = 'value'
+    自定义v-model语法糖  父组件上v-model  =》 
+        语法糖   v-on:input = "$emit('input',e.target.value)"  + :value = 'value'
+    v-model本质:「
+                    <!--v-model写法-->
+                    <my-component type="text" v-model="value">
+                    <!--展开语法糖后的写法-->
+                    <my-component type="text"
+                        :value="value"
+                        @input="value = $event.target.value"
+                    >
+                    <!--
+                        默认针对原生组件input事件，但是如果子组件定义了针对事件
+                        model: {
+                                prop: "value",
+                                event: "update"
+                        },
+                        则编译为
+                    -->
+                    <my-component type="text"
+                        :value="value"
+                        @update="(val) => value = val"
+                    >
+         」
 
+    .sync:「
+            <!--语法糖.sync-->
+            <my-component :value.sync="value" />
+            <!--编译后的写法-->
+            <my-component 
+                :value="msg" 
+                @update:value="(val) => value = val"
+            >
+    」
 插槽分发内容
     匿名插槽 <slot></slot>
             // 命名为text的插槽 //等号后面是自组件传递过来的对象，自定义
