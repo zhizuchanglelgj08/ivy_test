@@ -100,6 +100,8 @@ export default {
         }
         console.log('Notice',notice)
         notice.show()
+        // notice.hide()
+        console.log('Notice',notice)
       });
     },
   },

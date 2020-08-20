@@ -40,6 +40,7 @@ export default {
     hide() {
       this.isShow = false;
       this.remove();
+      //remove()方法 是create.js提供的
     },
   },
 };
