@@ -19,6 +19,9 @@
 </template>
 
 <script>
+import Notice from "../Notice";
+import create from "../../utils/create";
+
 import ivyTree from "./ivyTree";
 import ivyInput from "./ivyInput";
 import ivyLabel from "./ivyLabel";
@@ -80,12 +83,23 @@ export default {
   },
   methods: {
     onLogin() {
+      let notice;
       this.$refs["loginForm"].validate((isValid) => {
         if (isValid) {
-          alert("登录成功！");
+          notice = create(Notice, {
+            title: "温馨提示",
+            message: "登录成功",
+            duration: 2000,
+          });
         } else {
-          alert("登录失败！");
+          notice = create(Notice, {
+            title: "温馨提示",
+            message: "登录失败",
+            duration: 10000,
+          });
         }
+        console.log('Notice',notice)
+        notice.show()
       });
     },
   },

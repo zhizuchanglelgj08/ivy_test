@@ -26,21 +26,19 @@ export default {
     },
     onBlur() {
       //通知父节点ivyLabel校验
-        this.isIvyLabel(this)
+      this.isIvyLabel(this);
     },
-    isIvyLabel(_this){
-        
-        if(_this.$parent.$options._componentTag == 'ivyForm'){
-            throw new Error('ivyInput Mssing ivyLabel element')
-            return 
+    isIvyLabel(_this) {
+      if (_this.$parent.$options._componentTag == "ivyForm") {
+        throw new Error("ivyInput Mssing ivyLabel element");
+      } else {
+        if (_this.$parent.$options._componentTag == "ivyLabel") {
+          _this.$parent.$emit("validate");
+        } else {
+          this.isIvyLabel(_this.$parent);
         }
-
-        if(_this.$parent.$options._componentTag == 'ivyLabel'){
-            _this.$parent.$emit('validate')
-        }else{
-            this.isIvyLabel(_this.$parent)
-        }
-    }
+      }
+    },
   },
 };
 </script>
